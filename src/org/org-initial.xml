@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?xml-stylesheet href="http://moise.sourceforge.net/xml/os.xsl" type="text/xsl" ?>
+
+<organisational-specification
+    id="multi_agent_coordination_project"
+    os-version="0.8"
+
+    xmlns='http://moise.sourceforge.net/os'
+    xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+    xsi:schemaLocation='http://moise.sourceforge.net/os
+                        http://moise.sourceforge.net/xml/os.xsd' >
+
+<structural-specification>
+
+<role-definitions>
+			<role id="consumer" />
+            <role id="tour_operator" />
+            <role id="service_company" />
+            <role id="jumping_service" > <extends role="service_company"/>  </role>
+            <role id="diving_service" > <extends role="service_company"/>  </role>
+            <role id="accomodation_service" > <extends role="service_company"/>  </role>
+            <role id="touring_service" > <extends role="service_company"/>  </role>
+        </role-definitions>
+
+<group-specification id="group1">
+    <roles>
+                <role id="tour_operator" min="1" max="1" />
+                <role id="consumer" min="1" max="1" />
+                <role id="jumping_service" min="1" max="1" />
+                <role id="diving_service" min="1" max="1" />
+                <role id="accomodation_service" min="1" max="1" />
+                <role id="touring_service" min="1" max="1" />
+            </roles>
+
+    <links>
+                <link from="consumer"      type="authority"     to="tour_operator" scope="intra-group" />
+  				<link from="tour_operator" type="communication" to="consumer"      scope="intra-group" />
+                <link from="tour_operator"      type="authority"     to="service_company" scope="intra-group" />
+  				<link from="service_company" type="communication" to="tour_operator"      scope="intra-group" />
+            </links>
+    <formation-constraints>
+                <compatibility from="service_company" to="service_company" scope="intra-group" />
+            </formation-constraints>
+        </group-specification>
+    </structural-specification>
+
+    <functional-specification>
+        <scheme id="tour_plan_sch">
+            <goal id="tour_planned">
+                <plan operator="sequence">
+                    <goal id="extreme_jumps_organized"/>
+                    <goal id="dives_organized" />
+                    <goal id="accomodation_organized"/>
+                    <goal id="touristic_activities_organized"/>
+                </plan>
+            </goal>
+            <mission id="extreme_jumps_organized" min="1" max="1">
+                <goal id="tour_planned" />
+            </mission>
+             <mission id="dives_organized" min="1" max="1">
+                <goal id="tour_planned" />
+            </mission>
+             <mission id="accomodation_organized" min="1" max="1">
+                <goal id="tour_planned" />
+            </mission>
+             <mission id="touristic_activities_organized" min="1" max="1">
+                <goal id="tour_planned" />
+            </mission>
+            
+            <mission id="travel_planned" min="1" max="1">
+			     <goal id="tour_planned"/>
+			</mission>
+        </scheme>
+    </functional-specification>
+
+    <!-- properties>
+        <property id="default_management"  value="fail" />
+        <property
+    id="role_compatibility"  value="prohibition" />
+        <property id="mission_cardinality"
+    value="prohibition" />
+    </properties-->
+
+    <normative-specification>
+        <norm id="n1" type="obligation" role="tour_operator" mission="travel_planned"/>
+        <norm id="n2" type="obligation" role="extreme_jumps" mission="extreme_jumps_organized" />
+        <norm id="n3" type="obligation" role="dives" mission="dives_organized" />
+        <norm id="n4" type="obligation" role="accomodation" mission="accomodation_organized" />
+        <norm id="n5" type="obligation" role="touristic_activities" mission="touristic_activities_organized" />
+
+    </normative-specification>
+
+</organisational-specification>
+
+
+<!--
+       setup of Moise properties (e.g. role compatibility) handling (regimented or not)
+
+       when value = "fail", the platform ensures that the property is not broken (the property is thus regiment)
+       when value = "prohibition", violations are produced when the property is not followed by the agents
+       when value = "ignore", no norm is produced 
+
+       possible properties are defined in https://github.com/moise-lang/moise/blob/master/src/main/java/ora4mas/nopl/tools/os2nopl.java
+
+       some examples follow
+    -->
+<!-- properties>
+        <property id="default_management"  value="fail" />
+        <property id="role_compatibility"  value="prohibition" />
+        <property id="mission_cardinality" value="prohibition" />
+    </properties-->
+
+<!-- the norms of the application -->
